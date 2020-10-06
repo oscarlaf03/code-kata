@@ -1,5 +1,9 @@
 # Cool and interesting appraoches
 
+## link to problem
+
+https://leetcode.com/problems/shuffle-the-array/
+
 ## Pure Math approaches
 
 **python**
