@@ -1,6 +1,6 @@
 # Cool and interesting appraoches
 
-## Pure Math approach
+## Pure Math approaches
 
 **python**
 ```
