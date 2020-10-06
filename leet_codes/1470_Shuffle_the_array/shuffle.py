@@ -20,9 +20,13 @@ for i  in range(len(nums)):
         i+=1
 
 
+math_shuffled =  [nums[i//2 + i % 2 * n] for i in range(len(nums))]
+
+
 print('\n\n==printing results==\n\n')
 print(nums)
 print(shuffled_list)
+print(math_shuffled)
 
 #  checkou Python oneliner:
 #  return[x for y in (zip(nums[:n], nums[n:])) for x in y]
