@@ -23,3 +23,7 @@ for i  in range(len(nums)):
 print('\n\n==printing results==\n\n')
 print(nums)
 print(shuffled_list)
+
+#  checkou Python oneliner:
+#  return[x for y in (zip(nums[:n], nums[n:])) for x in y]
+
