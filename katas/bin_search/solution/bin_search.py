@@ -34,9 +34,9 @@ def bin_search(arr,target):
             high -= 1
         else:
             print('found and "bin_search":  ')
-            return mid
+            return True
     print('NOT found on "bin_search":  ')
-    return -1
+    return False
 
 print("\n\nreturning from 'bin_search' \n\n")
 print(bin_search(my_list,my_target))
