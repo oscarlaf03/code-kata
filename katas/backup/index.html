@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>Demo page</h1>
+
+    <!-- START Botmaker WebChat-->
+    <script>
+        let js = document.createElement("script");
+        js.type = "text/javascript";
+        js.async = 1;
+        js.src = "https://go.botmaker.com/rest/webchat/p/M3IJYYBFYI/init.js";
+        js.id = 'botmaker-web'
+        document.body.appendChild(js);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(function() {
+                this.bmHide();
+            }, 600);
+
+        })
+    </script>
+    <!-- END Botmaker WebChat-->
+</body>
+
+</html>
