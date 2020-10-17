@@ -5,35 +5,45 @@ import dateutil.parser
 import json
 import random
 
-from sample_transactions import TRANSACTION_SAMPLE, TRANSACTION_FAR_AWAY
-
 class FraudDetector:
     def __init__(self):
         self.DISTANCE_LIMIT = 20
         self.Location = namedtuple('Location', 'lat lng temporary expires')
         self.HOME_LOCATION = self.Location (119.0611119,35.35581513, False, None)
-        self.TRANSACTIONS = json.load(open('data.json','r'))['transactions']
+        self._TRANSACTIONS = json.load(open('data.json','r'))['transactions']
         self.set_transactions_id()
         self.ALLOWED_LOCATIONS = [self.HOME_LOCATION]
         self.FLAGGED_LOCATIONS = []
         self.DAYS_PERMISSIONED = 15
-        # print('printing self transactions')
-        # print(self.TRANSACTIONS)
 
-    # Location = namedtuple('Location', 'lat lng temporary expires')
+
+    @property
+    def TRANSACTIONS(self):
+        return self._TRANSACTIONS
+    
+    @TRANSACTIONS.setter
+    def TRANSACTIONS(self, value):
+        self._TRANSACTIONS = value
+
+
     def set_transactions_id(self):
         counter = 0
         indexed_transactions = []
         for t in self.TRANSACTIONS:
             t['id'] = counter
+            t['fraud'] = False
             indexed_transactions.append(t)
             counter += 1
         self.TRANSACTIONS = indexed_transactions
 
     def save_processed_transactions(self):
+        # print("saving data","to Save :",self.TRANSACTIONS)
+        print('\n== SAVING DATA==\n')
+        frauds = [ t for t in self.TRANSACTIONS if t['fraud'] == True]
+        print(f'TOTAL FRAUDS DETECTED: {len(frauds)} \n\n')
         with open('processed_transactions.json','w') as new_data:
-            json.dump({'transactions':[self.TRANSACTIONS]},new_data)
-            # new_data.save()
+            to_save ={'transactions':self.TRANSACTIONS}
+            json.dump( to_save,new_data)
             new_data.close()
 
 
@@ -84,11 +94,13 @@ class FraudDetector:
 
 
     def flag_as_fraud(self,transaction):
-        print(' before ** printing  transaction  :',transaction)
-        self.TRANSACTIONS[transaction['id']]['fraud'] = True
-        print('after ** printing after transaction  :',self.TRANSACTIONS[transaction['id']])
+        to_update = self.TRANSACTIONS[transaction['id']]
+        # self.TRANSACTIONS[transaction['id']] = True
+        # print('**BEFORE UPDATE: ', self.TRANSACTIONS[transaction['id']])
+        to_update['fraud'] = True
+        self.TRANSACTIONS = self.TRANSACTIONS
+        # print('**AFTER UPDATE: ', self.TRANSACTIONS[transaction['id']])
 
-        # transaction['fraud'] = True
 
     def validate_location(self,transaction):
             location = transaction['location']
@@ -121,19 +133,17 @@ class FraudDetector:
         else:
             print(f'Transaction: {transaction["name"]} is OK')
 
-    
     def process_all_transactions(self):
         for transaction in self.TRANSACTIONS:
             self.process_transaction(transaction)
 
-
-
-
+    def get_fraudulent_transactions(self):
+        return [ t for t in self.TRANSACTIONS if t['fraud']]
 
 
 
 
 # FraudDetector().process_transaction(TRANSACTION_FAR_AWAY)
-FraudDetector().process_all_transactions()
-FraudDetector().save_processed_transactions()
-# FraudDetector()
+f  = FraudDetector()
+f.process_all_transactions()
+f.save_processed_transactions()
