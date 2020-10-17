@@ -2,32 +2,25 @@ import math
 from collections import namedtuple
 import datetime
 import dateutil.parser
+import json
+import random
 
+from sample_transactions import TRANSACTION_SAMPLE, TRANSACTION_FAR_AWAY 
 
-TRANSACTION_SAMPLE_2 = {
-      "date": "2018-07-02",
-      "name": "SINEMA PARK 62 SANKT-PETERBU",
-      "amount": 4.18,
-      "pending": 'false',
-      "category": [ "Food and Drink", "Restaurants"],
-      "location": [119.04093,35.2959]
-}
-
-TRANSACTION_SAMPLE = {
-      "date": "2018-07-02",
-      "name": "SINEMA PARK 62 SANKT-PETERBU",
-      "amount": 4.18,
-      "pending": 'false',
-      "category": [ "Food and Drink", "Restaurants"],
-      "location": [119.04093,350.2959]
-}
 
 DISTANCE_LIMIT = 20
 Location = namedtuple('Location', 'lat lng temporary expires')
 HOME_LOCATION = Location (119.0611119,35.35581513, False, None)
+TRANSACTIONS = json.load(open('data.json','r'))['transactions']
 ALLOWED_LOCATIONS = [HOME_LOCATION]
 FLAGGED_LOCATIONS = []
 DAYS_PERMISSIONED = 15
+
+
+def save_processed_transactions():
+    with open('processed_transactions.json','w') as new_data:
+        json.dump({'transactions':[TRANSACTIONS]},new_data)
+        new_data.close()
 
 
 def within_expiration_date(location):
@@ -55,24 +48,17 @@ def minimum_distance(location,locations):
     return min(distances) if distances else None
 
 
-def get_user_confirmation(transaction):
-    print('Do you confirm this transaction: Y/N')
-    confirmation = input().upper()
-    # while confirmation != 'Y' or confirmation != 'N':
-    #     print('Please enter either Y/N')
-    #     confirmation  =  input().upper()
+def get_user_confirmation(transaction,):
+    print(f'Do you confirm this Transaction:{transaction["name"]}?\nPlease enter Y/N')
+    # confirmation = input().upper() # Actual confirmation  asking client input
+    confirmation = random.choice(['Y','N']) # Simulates a  user input randomly for testing purposes
+    print(f'You entered: {confirmation}')
     return confirmation
 
-
-def check_location(transaction):
-    pass
 
 def expiration_date():
     return (datetime.datetime.now() + datetime.timedelta(days=DAYS_PERMISSIONED)).isoformat 
 
-def needs_location_validation(location):
-    distance_from_allowed_locations = minimum_distance(location, ALLOWED_LOCATIONS)
-    return distance_from_allowed_locations >  DISTANCE_LIMIT
 
 def needs_flag(location):
     distance_from_allowed_locations = minimum_distance(location, ALLOWED_LOCATIONS)
@@ -94,13 +80,15 @@ def validate_location(transaction):
             #TODO 
             # accept_transaction(transaction)
             ALLOWED_LOCATIONS.append(new_location)
-            print("Allowed and added")
+            print(f'Transaction {transaction["name"]} **ALLOWED** and to safe locations updated')
         else:
             FLAGGED_LOCATIONS.append(new_location)
             flag_as_fraud(transaction)
-            print("Flagged and rejected")
+            print(f'Transaction {transaction["name"]}  **REJECTED** flagged as fraud and flagged locations updated')
+
 
 def process_transaction(transaction):
+    print(f'Processing Transaction: {transaction["name"]}')
     location = transaction['location']
     distance_from_allowed_locations = minimum_distance(location, ALLOWED_LOCATIONS)
     distance_from_flagged_locations = minimum_distance(location, FLAGGED_LOCATIONS)
@@ -110,9 +98,11 @@ def process_transaction(transaction):
         validate_location(transaction)
     elif reject_location:
         flag_as_fraud(transaction)
+        print(f'Transaction {transaction["name"]}  **REJECTED** due to previous flaged location')
+
     else:
-        print("Valid transaction")
+        print(f'Transaction: {transaction["name"]} is OK')
 
 
 
-process_transaction(TRANSACTION_SAMPLE)
+process_transaction(TRANSACTION_FAR_AWAY)

@@ -62,7 +62,7 @@
       "amount": 12.52,
       "pending": false,
       "category": [ "Shops", "Supermarkets and Groceries" ],
-      "location": [119.092299,35.310587],
+      "location": [119.092299,35.310587]
     },
     {
       "date": "2016-12-23",
@@ -122,7 +122,7 @@
       "amount": 107.24,
       "pending": false,
       "category": [ "Shops" ],
-      "location": [119.093446,35.35443543],
+      "location": [119.093446,35.35443543]
     },
     {
       "date": "2018-11-16",
