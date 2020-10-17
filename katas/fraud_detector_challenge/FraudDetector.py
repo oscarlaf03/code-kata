@@ -20,11 +20,10 @@ class FraudDetector:
     @property
     def TRANSACTIONS(self):
         return self._TRANSACTIONS
-    
+
     @TRANSACTIONS.setter
     def TRANSACTIONS(self, value):
         self._TRANSACTIONS = value
-
 
     def set_transactions_id(self):
         counter = 0
@@ -37,7 +36,6 @@ class FraudDetector:
         self.TRANSACTIONS = indexed_transactions
 
     def save_processed_transactions(self):
-        # print("saving data","to Save :",self.TRANSACTIONS)
         print('\n== SAVING DATA==\n')
         frauds = [ t for t in self.TRANSACTIONS if t['fraud'] == True]
         print(f'TOTAL FRAUDS DETECTED: {len(frauds)} \n\n')
@@ -55,6 +53,9 @@ class FraudDetector:
     def get_unexpired_locations(self,locations):
         return [ l for l in locations if self.within_expiration_date(l)]
 
+    def print_transaction_details(self,transaction):
+        print(f'Amount: ${transaction["amount"]} date: {transaction["date"]} location:{transaction["location"]}')
+
 
     def euclidean_distance(self,location_a, location_b):
         lat_user_location = location_a[0]
@@ -62,7 +63,6 @@ class FraudDetector:
         lat_transaction = location_b[0]
         lng_transaction = location_b[1]
         return math.sqrt((lat_transaction-lat_user_location)**2 + (lng_transaction-lng_user_location)**2)
-
 
     def minimum_distance(self,location,locations):
         eligible_locations = self.get_unexpired_locations(locations)
@@ -73,10 +73,11 @@ class FraudDetector:
 
 
     def get_user_confirmation(self,transaction,):
+        print('\n**DANGER** This transaction needs user confirmation\n')
         print(f'Do you confirm this Transaction:{transaction["name"]}?\nPlease enter Y/N')
         # confirmation = input().upper() # Actual confirmation  asking client input
         confirmation = random.choice(['Y','N']) # Simulates a  user input randomly for testing purposes
-        print(f'You entered: {confirmation}')
+        print(f'User entered: {confirmation}')
         return confirmation
 
 
@@ -95,11 +96,8 @@ class FraudDetector:
 
     def flag_as_fraud(self,transaction):
         to_update = self.TRANSACTIONS[transaction['id']]
-        # self.TRANSACTIONS[transaction['id']] = True
-        # print('**BEFORE UPDATE: ', self.TRANSACTIONS[transaction['id']])
         to_update['fraud'] = True
         self.TRANSACTIONS = self.TRANSACTIONS
-        # print('**AFTER UPDATE: ', self.TRANSACTIONS[transaction['id']])
 
 
     def validate_location(self,transaction):
@@ -107,8 +105,6 @@ class FraudDetector:
             user_confirmation = self.get_user_confirmation(transaction)
             new_location = self.Location(location[0],location[1], True, self.expiration_date())
             if user_confirmation == 'Y':
-                #TODO 
-                # accept_transaction(transaction)
                 self.ALLOWED_LOCATIONS.append(new_location)
                 print(f'Transaction {transaction["name"]} **ALLOWED** and to safe locations updated')
             else:
@@ -119,6 +115,7 @@ class FraudDetector:
 
     def process_transaction(self,transaction):
         print(f'Processing Transaction: {transaction["name"]}')
+        self.print_transaction_details(transaction)
         location = transaction['location']
         distance_from_allowed_locations = self.minimum_distance(location, self.ALLOWED_LOCATIONS)
         distance_from_flagged_locations = self.minimum_distance(location, self.FLAGGED_LOCATIONS)
@@ -128,8 +125,7 @@ class FraudDetector:
             self.validate_location(transaction)
         elif reject_location:
             self.flag_as_fraud(transaction)
-            print(f'Transaction {transaction["name"]}  **REJECTED** due to previous flaged location')
-
+            print(f'Transaction {transaction["name"]}  **REJECTED** automatically due to previously flagged location')
         else:
             print(f'Transaction: {transaction["name"]} is OK')
 
