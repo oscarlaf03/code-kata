@@ -16,7 +16,6 @@ class FraudDetector:
         self.FLAGGED_LOCATIONS = []
         self.DAYS_PERMISSIONED = 15
 
-
     @property
     def TRANSACTIONS(self):
         return self._TRANSACTIONS
@@ -44,7 +43,6 @@ class FraudDetector:
             json.dump( to_save,new_data)
             new_data.close()
 
-
     def within_expiration_date(self,location):
         now = datetime.datetime.now()
         expires = location.expires
@@ -55,7 +53,6 @@ class FraudDetector:
 
     def print_transaction_details(self,transaction):
         print(f'Amount: ${transaction["amount"]} date: {transaction["date"]} location:{transaction["location"]}')
-
 
     def euclidean_distance(self,location_a, location_b):
         lat_user_location = location_a[0]
@@ -71,7 +68,6 @@ class FraudDetector:
             distances.append(self.euclidean_distance(l,location))
         return min(distances) if distances else None
 
-
     def get_user_confirmation(self,transaction,):
         print('\n**DANGER** This transaction needs user confirmation\n')
         print(f'Do you confirm this Transaction:{transaction["name"]}?\nPlease enter Y/N')
@@ -80,10 +76,8 @@ class FraudDetector:
         print(f'User entered: {confirmation}')
         return confirmation
 
-
     def expiration_date(self):
         return (datetime.datetime.now() + datetime.timedelta(days=self.DAYS_PERMISSIONED)).isoformat()
-
 
     def needs_flag(self,location):
         distance_from_allowed_locations = self.minimum_distance(location, self.ALLOWED_LOCATIONS)
@@ -93,12 +87,10 @@ class FraudDetector:
         else:
             return False
 
-
     def flag_as_fraud(self,transaction):
         to_update = self.TRANSACTIONS[transaction['id']]
         to_update['fraud'] = True
         self.TRANSACTIONS = self.TRANSACTIONS
-
 
     def validate_location(self,transaction):
             location = transaction['location']
@@ -111,7 +103,6 @@ class FraudDetector:
                 self.FLAGGED_LOCATIONS.append(new_location)
                 self.flag_as_fraud(transaction)
                 print(f'Transaction {transaction["name"]}  **REJECTED** flagged as fraud and flagged locations updated')
-
 
     def process_transaction(self,transaction):
         print(f'Processing Transaction: {transaction["name"]}')

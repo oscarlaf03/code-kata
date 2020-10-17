@@ -15,7 +15,7 @@
 * var home = [119.0611119,35.35581513]
 
 ## My Solution
-I split the logic into several small functions grouped together for  the `FraudDetector` class 
+I split the logic into several small functions grouped together inside the `FraudDetector` class 
 
 ### Assumptions
 In spite of the data in "data.json" having a `date` attribute for each transaction with very different broad ranging from either 2016 or 2018 I assumed that `FraudDectecor` will receive each transaction for analysis in real time and assume a  time value of `datetime.datetime.now()`for the moment in which `FraudDetector` conducts its anlysis
@@ -25,7 +25,7 @@ In spite of the data in "data.json" having a `date` attribute for each transacti
 
 * `FraudDetector().process_all_transactions()`  This methd does everything. it will read the transactions from "data.json"  analyse each of them one by one, ask for user confirmation when needed and simulate such an user input and save the processed transactions to a new file "processed_transactions.json" for furthter inspection
 
-* `FraudDetector().get_get_fraudulent_transactions()` it looks inside it is own properties to retrieve a list of only the transactions marked as fraudulent, to get accurate data you migth want to run first the `process_all_transactions()` method on the same instance in order to first asses which transactions have been rejected due to proximity to valid `FLAGGED_LOCATIONS`
+* `FraudDetector().get_fraudulent_transactions()` it looks inside it is own properties to retrieve a list of only the transactions marked as fraudulent, to get accurate data you might want to run first the `process_all_transactions()` method on the same instance in order to first asses which transactions have been rejected due to proximity to valid `FLAGGED_LOCATIONS`
 
 ### Requirements
 * `math`
@@ -76,7 +76,7 @@ So in shor thanks to running that logic we will that we do not need to ask for u
 
 When the location of the transactions is not the closest to any valid known `FLAGGED_LOCATION` and it is not within the `DISTANCE_LIMIT` of any valid `ALLOWED_LOCATIONS` then it is time to ask for user confirmation on such suspicious transaction
 
-`FraudDetector` props the user for a transaction confirmation. In  this challenge the user input is simulated randomly in order to get any type of scenarios automatically
+`FraudDetector` prompts the user for a transaction confirmation. In this challenge the user input is simulated randomly in order to get any type of scenarios automatically
 
 **Handling User confirmation**
 Depending on the user confirmation input the location of the suspicious transaction will be added to either `ALLOWED_LOCATIONS` or  `FLAGGED_LOCATIONS` and thus the instance of the class `FraudDetector` becomes smarter to handle the next transaction request
