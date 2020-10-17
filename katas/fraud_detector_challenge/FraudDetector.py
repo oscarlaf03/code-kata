@@ -132,14 +132,8 @@ class FraudDetector:
     def process_all_transactions(self):
         for transaction in self.TRANSACTIONS:
             self.process_transaction(transaction)
+        self.save_processed_transactions()
 
     def get_fraudulent_transactions(self):
         return [ t for t in self.TRANSACTIONS if t['fraud']]
 
-
-
-
-# FraudDetector().process_transaction(TRANSACTION_FAR_AWAY)
-f  = FraudDetector()
-f.process_all_transactions()
-f.save_processed_transactions()
